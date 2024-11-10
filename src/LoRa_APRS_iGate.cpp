@@ -20,6 +20,7 @@
              (donations : http://paypal.me/richonguzman)
 ___________________________________________________________________*/
 
+#include <esp_task_wdt.h>
 #include <ElegantOTA.h>
 #include <TinyGPS++.h>
 #include <Arduino.h>
@@ -125,6 +126,11 @@ void setup() {
             Config.loramodule.rxActive = false;
         }
     #endif
+
+    esp_task_wdt_init(120, true);
+    esp_task_wdt_add(NULL);
+    esp_task_wdt_reset();
+
     DIGI_Utils::checkEcoMode();
     WIFI_Utils::setup();
     NTP_Utils::setup();
@@ -140,6 +146,8 @@ void setup() {
 }
 
 void loop() {
+    esp_task_wdt_reset();
+
     WIFI_Utils::checkAutoAPTimeout();
 
     if (isUpdatingOTA) {
